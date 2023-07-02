@@ -7,12 +7,14 @@ const PADDING = 50
 const ROWS_INDENT = DPI_HEIGHT - PADDING * 2
 
 let data = [
-  [0, 0],
-  [200, 120],
-  [400, 140],
-  [600, 508],
-  [800, 280],
-  [1000, 560],
+  [0, 6.8],
+  [200, 16.1],
+  [400, 19],
+  [600, -20.9],
+  [800, 25.3],
+  [1000, 20.7],
+  [1200, -2.4],
+  [1400, 13],
 ]
 
 const [yMin, yMax] = minMax(data)
@@ -20,6 +22,7 @@ const [yMin, yMax] = minMax(data)
 temp(document.getElementById('canvas'), data)
 
 function temp(canvas, data) {
+
   let ctx = canvas.getContext('2d')
 
   canvas.style.width = WIDTH + 'px'
@@ -27,18 +30,13 @@ function temp(canvas, data) {
   canvas.width = DPI_WIDTH
   canvas.height = DPI_HEIGHT
 
-  const rowsAxis = yMax - yMin + PADDING * 2
-  const rowsIndentFact = yMax - yMin
-  const kof = (yMax - yMin) / DPI_HEIGHT
-  console.log([yMin, yMax], rowsAxis, DPI_HEIGHT, kof, PADDING)
-
+  const rowsAxis = yMax - yMin
+  const kof = (yMax - yMin) / (DPI_HEIGHT - PADDING * 2)
   ctx.beginPath()
   ctx.lineWidth = 4
   ctx.strokeStyle = 'red'
   for (const [x, y] of data) {
-    let prom = (rowsIndentFact - y) / kof
-    ctx.lineTo(x, prom)
-    console.log(prom)
+      ctx.lineTo(x, (yMax - y) / kof + PADDING)
   }
   ctx.stroke()
   ctx.closePath()
@@ -48,20 +46,53 @@ function temp(canvas, data) {
   ctx.beginPath()
   ctx.lineWidth = 2
   ctx.strokeStyle = '#bbb'
-  ctx.font = 'normal 20px Comic Sans MS, sans-serif'
-  ctx.fillStyle = '#000FFF'
+  ctx.font = 'normal 25px Comic Sans MS, sans-serif'
+  ctx.fillStyle = '#black'
   const STEP = ROWS_INDENT / ROWS_COUNT
   for (let i = 1; i <= ROWS_COUNT; i++) {
     const y = i * STEP
     const textStep = rowsAxis / ROWS_COUNT * i
-    ctx.fillText(rowsAxis - textStep, 0, y + PADDING - 10)
+    ctx.fillText((yMax - textStep).toFixed(1), 0, y + PADDING - 10)
     ctx.moveTo(0, y + PADDING)
     ctx.lineTo(DPI_WIDTH, y + PADDING)
   }
+
+  ctx.fillText(yMax, 0, PADDING - 10)
+  ctx.moveTo(0, PADDING)
+  ctx.lineTo(DPI_WIDTH, PADDING)
   ctx.stroke()
   ctx.closePath()
 
   //
+
+  // x legend
+
+  ctx.beginPath()
+  ctx.font = 'normal 25px Comic Sans MS, sans-serif'
+  ctx.fillStyle = '#black'
+
+  for (const [x,] of data) {
+    ctx.moveTo(x, DPI_HEIGHT - PADDING + 10)
+    ctx.lineTo(x, PADDING - 10)
+    ctx.fillText(x, x - 25, DPI_HEIGHT - 10)
+  }
+
+  ctx.stroke()
+
+  //
+
+  canvas.addEventListener('mousemove', function (e) {
+
+      ctx.beginPath()
+      ctx.lineWidth = 2
+      ctx.strokeStyle = '#bbb'
+      ctx.moveTo(e.offsetX * 2, DPI_HEIGHT - PADDING)
+      ctx.lineTo(e.offsetX * 2, PADDING)
+      ctx.stroke()
+      console.log(e)
+      // ctx.clearRect(e.layerX * 2 - 140, PADDING, 2, DPI_HEIGHT)
+      ctx.closePath()
+    })
 }
 
 function minMax(data) {
