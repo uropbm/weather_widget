@@ -92,10 +92,16 @@ function temp(canvas, data) {
     ctx.lineWidth = 2
     ctx.strokeStyle = '#bbb'
     ctx.moveTo(e.offsetX * 2, DPI_HEIGHT - PADDING)
-    ctx.lineTo(e.offsetX * 2, (yMax - data[Math.floor(e.offsetX / 100)][1]) / kof + PADDING)
+    // ctx.lineTo(e.offsetX * 2, (yMax - data[Math.floor(e.offsetX / 100)][1]) / kof + PADDING)
     
-    let k = 
-    console.log((yMax - data[Math.floor(e.offsetX / 100)][1]) / kof + PADDING)
+    let k = (data[Math.floor(e.offsetX / 100) + 1][1] - data[Math.floor(e.offsetX / 100)][1]) * 2
+    let alfa = k / 200
+    let a = alfa * (e.offsetX - (Math.floor(e.offsetX / 100)) * 100) 
+    console.log(e.offsetX - (Math.floor(e.offsetX / 100)) * 100)
+    ctx.lineTo(e.offsetX * 2, (yMax - data[Math.floor(e.offsetX / 100)][1] - a) / kof + PADDING)
+
+    // console.log(k)
+    // console.log((yMax - data[Math.floor(e.offsetX / 100)][1]) / kof + PADDING)
     ctx.stroke() 
     draw()
     ctx.closePath()
